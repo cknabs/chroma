@@ -1,0 +1,14 @@
+<lexer>
+  <name>fallback</name>
+  <filename>*</filename>
+  <rules>
+    <state name="root">
+      <rule pattern=".+">
+        <token type="Text"/>
+      </rule>
+      <rule pattern="\n">
+        <token type="Text"/>
+      </rule>
+    </state>
+  </rules>
+</lexer>

@@ -86,53 +86,25 @@ func typoscriptRules() Rules {
 }
 
 // TypoScriptCSSData lexer.
-var TypoScriptCSSData = internal.Register(MustNewLazyLexer(
+var TypoScriptCSSData = internal.Register(MustNewXMLLexer(
 	&Config{
 		Name:      "TypoScriptCssData",
 		Aliases:   []string{"typoscriptcssdata"},
 		Filenames: []string{},
 		MimeTypes: []string{},
 	},
-	typoScriptCSSDataRules,
+	embedded,
+	"embedded/typoscriptcssdata.xml",
 ))
 
-func typoScriptCSSDataRules() Rules {
-	return Rules{
-		"root": {
-			{`(.*)(###\w+###)(.*)`, ByGroups(LiteralString, NameConstant, LiteralString), nil},
-			{`(\{)(\$)((?:[\w\-]+\.)*)([\w\-]+)(\})`, ByGroups(LiteralStringSymbol, Operator, NameConstant, NameConstant, LiteralStringSymbol), nil},
-			{`(.*)(\{)([\w\-]+)(\s*:\s*)([\w\-]+)(\})(.*)`, ByGroups(LiteralString, LiteralStringSymbol, NameConstant, Operator, NameConstant, LiteralStringSymbol, LiteralString), nil},
-			{`\s+`, Text, nil},
-			{`/\*(?:(?!\*/).)*\*/`, Comment, nil},
-			{`(?<!(#|\'|"))(?:#(?!(?:[a-fA-F0-9]{6}|[a-fA-F0-9]{3}))[^\n#]+|//[^\n]*)`, Comment, nil},
-			{`[<>,:=.*%+|]`, LiteralString, nil},
-			{`[\w"\-!/&;(){}]+`, LiteralString, nil},
-		},
-	}
-}
-
 // TypoScriptHTMLData lexer.
-var TypoScriptHTMLData = internal.Register(MustNewLazyLexer(
+var TypoScriptHTMLData = internal.Register(MustNewXMLLexer(
 	&Config{
 		Name:      "TypoScriptHtmlData",
 		Aliases:   []string{"typoscripthtmldata"},
 		Filenames: []string{},
 		MimeTypes: []string{},
 	},
-	typoScriptHTMLDataRules,
+	embedded,
+	"embedded/typoscripthtmldata.xml",
 ))
-
-func typoScriptHTMLDataRules() Rules {
-	return Rules{
-		"root": {
-			{`(INCLUDE_TYPOSCRIPT)`, NameClass, nil},
-			{`(EXT|FILE|LLL):[^}\n"]*`, LiteralString, nil},
-			{`(.*)(###\w+###)(.*)`, ByGroups(LiteralString, NameConstant, LiteralString), nil},
-			{`(\{)(\$)((?:[\w\-]+\.)*)([\w\-]+)(\})`, ByGroups(LiteralStringSymbol, Operator, NameConstant, NameConstant, LiteralStringSymbol), nil},
-			{`(.*)(\{)([\w\-]+)(\s*:\s*)([\w\-]+)(\})(.*)`, ByGroups(LiteralString, LiteralStringSymbol, NameConstant, Operator, NameConstant, LiteralStringSymbol, LiteralString), nil},
-			{`\s+`, Text, nil},
-			{`[<>,:=.*%+|]`, LiteralString, nil},
-			{`[\w"\-!/&;(){}#]+`, LiteralString, nil},
-		},
-	}
-}

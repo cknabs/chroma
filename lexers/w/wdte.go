@@ -6,28 +6,11 @@ import (
 )
 
 // WDTE lexer.
-var WDTE = internal.Register(MustNewLazyLexer(
+var WDTE = internal.Register(MustNewXMLLexer(
 	&Config{
 		Name:      "WDTE",
 		Filenames: []string{"*.wdte"},
 	},
-	wdteRules,
+	embedded,
+	"embedded/wdte.xml",
 ))
-
-func wdteRules() Rules {
-	return Rules{
-		"root": {
-			{`\n`, Text, nil},
-			{`\s+`, Text, nil},
-			{`\\\n`, Text, nil},
-			{`#(.*?)\n`, CommentSingle, nil},
-			{`-?[0-9]+`, LiteralNumberInteger, nil},
-			{`-?[0-9]*\.[0-9]+`, LiteralNumberFloat, nil},
-			{`"[^"]*"`, LiteralString, nil},
-			{`'[^']*'`, LiteralString, nil},
-			{Words(``, `\b`, `switch`, `default`, `memo`), KeywordReserved, nil},
-			{`{|}|;|->|=>|\(|\)|\[|\]|\.`, Operator, nil},
-			{`[^{};()[\].\s]+`, NameVariable, nil},
-		},
-	}
-}

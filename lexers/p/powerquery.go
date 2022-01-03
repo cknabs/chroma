@@ -6,7 +6,7 @@ import (
 )
 
 // PowerQuery lexer.
-var PowerQuery = internal.Register(MustNewLazyLexer(
+var PowerQuery = internal.Register(MustNewXMLLexer(
 	&Config{
 		Name:            "PowerQuery",
 		Aliases:         []string{"powerquery", "pq"},
@@ -15,24 +15,6 @@ var PowerQuery = internal.Register(MustNewLazyLexer(
 		DotAll:          true,
 		CaseInsensitive: true,
 	},
-	powerqueryRules,
+	embedded,
+	"embedded/powerquery.xml",
 ))
-
-func powerqueryRules() Rules {
-	return Rules{
-		"root": {
-			{`\s+`, Text, nil},
-			{`//.*?\n`, CommentSingle, nil},
-			{`/\*.*?\*/`, CommentMultiline, nil},
-			{`"(\\\\|\\"|[^"])*"`, LiteralString, nil},
-			{`(and|as|each|else|error|false|if|in|is|let|meta|not|null|or|otherwise|section|shared|then|true|try|type)\b`, Keyword, nil},
-			{`(#binary|#date|#datetime|#datetimezone|#duration|#infinity|#nan|#sections|#shared|#table|#time)\b`, KeywordType, nil},
-			{`(([a-zA-Z]|_)[\w|._]*|#"[^"]+")`, Name, nil},
-			{`0[xX][0-9a-fA-F][0-9a-fA-F_]*[lL]?`, LiteralNumberHex, nil},
-			{`([0-9]+\.[0-9]+|\.[0-9]+)([eE][0-9]+)?`, LiteralNumberFloat, nil},
-			{`[0-9]+`, LiteralNumberInteger, nil},
-			{`[\(\)\[\]\{\}]`, Punctuation, nil},
-			{`\.\.|\.\.\.|=>|<=|>=|<>|[@!?,;=<>\+\-\*\/&]`, Operator, nil},
-		},
-	}
-}

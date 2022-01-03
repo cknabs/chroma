@@ -8,14 +8,15 @@ import (
 )
 
 // Zed lexer.
-var Zed = internal.Register(MustNewLazyLexer(
+var Zed = internal.Register(MustNewXMLLexer(
 	&Config{
 		Name:      "Zed",
 		Aliases:   []string{"zed"},
 		Filenames: []string{"*.zed"},
 		MimeTypes: []string{"text/zed"},
 	},
-	zedRules,
+	embedded,
+	"embedded/zed.xml",
 ).SetAnalyser(func(text string) float32 {
 	if strings.Contains(text, "definition ") && strings.Contains(text, "relation ") && strings.Contains(text, "permission ") {
 		return 0.9
@@ -31,23 +32,3 @@ var Zed = internal.Register(MustNewLazyLexer(
 	}
 	return 0.0
 }))
-
-func zedRules() Rules {
-	return Rules{
-		"root": {
-			{`\n`, TextWhitespace, nil},
-			{`\s+`, TextWhitespace, nil},
-			{`//.*?\n`, CommentSingle, nil},
-			{`/(\\\n)?[*][\w\W]*?[*](\\\n)?/`, CommentMultiline, nil},
-			{`/(\\\n)?[*][\w\W]*`, CommentMultiline, nil},
-			{Words(``, `\b`, `definition`), KeywordType, nil},
-			{Words(``, `\b`, `relation`), KeywordNamespace, nil},
-			{Words(``, `\b`, `permission`), KeywordDeclaration, nil},
-			{`[a-zA-Z_]\w*/`, NameNamespace, nil},
-			{`[a-zA-Z_]\w*`, Name, nil},
-			{`#[a-zA-Z_]\w*`, NameVariable, nil},
-			{`[+%=><|^!?/\-*&~:]`, Operator, nil},
-			{`[{}()\[\],.;]`, Punctuation, nil},
-		},
-	}
-}

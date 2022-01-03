@@ -9,7 +9,7 @@ import (
 )
 
 // PHTML lexer is PHP in HTML.
-var PHTML = internal.Register(DelegatingLexer(h.HTML, MustNewLazyLexer(
+var PHTML = internal.Register(DelegatingLexer(h.HTML, MustNewXMLLexer(
 	&Config{
 		Name:            "PHTML",
 		Aliases:         []string{"phtml"},
@@ -20,20 +20,11 @@ var PHTML = internal.Register(DelegatingLexer(h.HTML, MustNewLazyLexer(
 		EnsureNL:        true,
 		Priority:        2,
 	},
-	phtmlRules,
+	embedded,
+	"embedded/phtml.xml",
 ).SetAnalyser(func(text string) float32 {
 	if strings.Contains(text, "<?php") {
 		return 0.5
 	}
 	return 0.0
 })))
-
-func phtmlRules() Rules {
-	return Rules{
-		"root": {
-			{`<\?(php)?`, CommentPreproc, Push("php")},
-			{`[^<]+`, Other, nil},
-			{`<`, Other, nil},
-		},
-	}.Merge(phpCommonRules())
-}

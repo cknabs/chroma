@@ -63,61 +63,20 @@ func goRules() Rules {
 	}
 }
 
-func goTemplateRules() Rules {
-	return Rules{
-		"root": {
-			{`{{(- )?/\*(.|\n)*?\*/( -)?}}`, CommentMultiline, nil},
-			{`{{[-]?`, CommentPreproc, Push("template")},
-			{`[^{]+`, Other, nil},
-			{`{`, Other, nil},
-		},
-		"template": {
-			{`[-]?}}`, CommentPreproc, Pop(1)},
-			{`(?=}})`, CommentPreproc, Pop(1)}, // Terminate the pipeline
-			{`\(`, Operator, Push("subexpression")},
-			{`"(\\\\|\\"|[^"])*"`, LiteralString, nil},
-			Include("expression"),
-		},
-		"subexpression": {
-			{`\)`, Operator, Pop(1)},
-			Include("expression"),
-		},
-		"expression": {
-			{`\s+`, Whitespace, nil},
-			{`\(`, Operator, Push("subexpression")},
-			{`(range|if|else|while|with|template|end|true|false|nil|and|call|html|index|js|len|not|or|print|printf|println|urlquery|eq|ne|lt|le|gt|ge)\b`, Keyword, nil},
-			{`\||:?=|,`, Operator, nil},
-			{`[$]?[^\W\d]\w*`, NameOther, nil},
-			{`\$|[$]?\.(?:[^\W\d]\w*)?`, NameAttribute, nil},
-			{`"(\\\\|\\"|[^"])*"`, LiteralString, nil},
-			{`-?\d+i`, LiteralNumber, nil},
-			{`-?\d+\.\d*([Ee][-+]\d+)?i`, LiteralNumber, nil},
-			{`\.\d+([Ee][-+]\d+)?i`, LiteralNumber, nil},
-			{`-?\d+[Ee][-+]\d+i`, LiteralNumber, nil},
-			{`-?\d+(\.\d+[eE][+\-]?\d+|\.\d*|[eE][+\-]?\d+)`, LiteralNumberFloat, nil},
-			{`-?\.\d+([eE][+\-]?\d+)?`, LiteralNumberFloat, nil},
-			{`-?0[0-7]+`, LiteralNumberOct, nil},
-			{`-?0[xX][0-9a-fA-F]+`, LiteralNumberHex, nil},
-			{`-?0b[01_]+`, LiteralNumberBin, nil},
-			{`-?(0|[1-9][0-9]*)`, LiteralNumberInteger, nil},
-			{`'(\\['"\\abfnrtv]|\\x[0-9a-fA-F]{2}|\\[0-7]{1,3}|\\u[0-9a-fA-F]{4}|\\U[0-9a-fA-F]{8}|[^\\])'`, LiteralStringChar, nil},
-			{"`[^`]*`", LiteralString, nil},
-		},
-	}
-}
-
-var GoHTMLTemplate = internal.Register(DelegatingLexer(h.HTML, MustNewLazyLexer(
+var GoHTMLTemplate = internal.Register(DelegatingLexer(h.HTML, MustNewXMLLexer(
 	&Config{
 		Name:    "Go HTML Template",
 		Aliases: []string{"go-html-template"},
 	},
-	goTemplateRules,
+	embedded,
+	"embedded/go_template.xml",
 )))
 
-var GoTextTemplate = internal.Register(MustNewLazyLexer(
+var GoTextTemplate = internal.Register(MustNewXMLLexer(
 	&Config{
 		Name:    "Go Text Template",
 		Aliases: []string{"go-text-template"},
 	},
-	goTemplateRules,
+	embedded,
+	"embedded/go_template.xml",
 ))

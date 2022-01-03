@@ -6,33 +6,13 @@ import (
 )
 
 // Brainfuck lexer.
-var Brainfuck = internal.Register(MustNewLazyLexer(
+var Brainfuck = internal.Register(MustNewXMLLexer(
 	&Config{
 		Name:      "Brainfuck",
 		Aliases:   []string{"brainfuck", "bf"},
 		Filenames: []string{"*.bf", "*.b"},
 		MimeTypes: []string{"application/x-brainfuck"},
 	},
-	brainfuckRules,
+	embedded,
+	"embedded/brainfuck.xml",
 ))
-
-func brainfuckRules() Rules {
-	return Rules{
-		"common": {
-			{`[.,]+`, NameTag, nil},
-			{`[+-]+`, NameBuiltin, nil},
-			{`[<>]+`, NameVariable, nil},
-			{`[^.,+\-<>\[\]]+`, Comment, nil},
-		},
-		"root": {
-			{`\[`, Keyword, Push("loop")},
-			{`\]`, Error, nil},
-			Include("common"),
-		},
-		"loop": {
-			{`\[`, Keyword, Push()},
-			{`\]`, Keyword, Pop(1)},
-			Include("common"),
-		},
-	}
-}

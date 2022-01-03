@@ -6,7 +6,7 @@ import (
 )
 
 // Diff lexer.
-var Diff = internal.Register(MustNewLazyLexer(
+var Diff = internal.Register(MustNewXMLLexer(
 	&Config{
 		Name:      "Diff",
 		Aliases:   []string{"diff", "udiff"},
@@ -14,20 +14,6 @@ var Diff = internal.Register(MustNewLazyLexer(
 		Filenames: []string{"*.diff", "*.patch"},
 		MimeTypes: []string{"text/x-diff", "text/x-patch"},
 	},
-	diffRules,
+	embedded,
+	"embedded/diff.xml",
 ))
-
-func diffRules() Rules {
-	return Rules{
-		"root": {
-			{` .*\n`, Text, nil},
-			{`\+.*\n`, GenericInserted, nil},
-			{`-.*\n`, GenericDeleted, nil},
-			{`!.*\n`, GenericStrong, nil},
-			{`@.*\n`, GenericSubheading, nil},
-			{`([Ii]ndex|diff).*\n`, GenericHeading, nil},
-			{`=.*\n`, GenericHeading, nil},
-			{`.*\n`, Text, nil},
-		},
-	}
-}

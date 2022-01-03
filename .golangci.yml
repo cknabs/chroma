@@ -36,6 +36,7 @@ linters:
     - ifshort
     - wrapcheck
     - stylecheck
+    - thelper
 
 linters-settings:
   govet:

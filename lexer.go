@@ -15,30 +15,30 @@ var (
 // Config for a lexer.
 type Config struct {
 	// Name of the lexer.
-	Name string
+	Name string `xml:"name,omitempty"`
 
 	// Shortcuts for the lexer
-	Aliases []string
+	Aliases []string `xml:"alias,omitempty"`
 
 	// File name globs
-	Filenames []string
+	Filenames []string `xml:"filename,omitempty"`
 
 	// Secondary file name globs
-	AliasFilenames []string
+	AliasFilenames []string `xml:"alias_filename,omitempty"`
 
 	// MIME types
-	MimeTypes []string
+	MimeTypes []string `xml:"mime_type,omitempty"`
 
 	// Regex matching is case-insensitive.
-	CaseInsensitive bool
+	CaseInsensitive bool `xml:"case_insensitive,omitempty"`
 
 	// Regex matches all characters.
-	DotAll bool
+	DotAll bool `xml:"dot_all,omitempty"`
 
 	// Regex does not match across lines ($ matches EOL).
 	//
 	// Defaults to multiline.
-	NotMultiline bool
+	NotMultiline bool `xml:"not_multiline,omitempty"`
 
 	// Don't strip leading and trailing newlines from the input.
 	// DontStripNL bool
@@ -48,7 +48,7 @@ type Config struct {
 
 	// Make sure that the input ends with a newline. This
 	// is required for some lexers that consume input linewise.
-	EnsureNL bool
+	EnsureNL bool `xml:"ensure_nl,omitempty"`
 
 	// If given and greater than 0, expand tabs in the input.
 	// TabSize int
@@ -56,7 +56,7 @@ type Config struct {
 	// Priority of lexer.
 	//
 	// If this is 0 it will be treated as a default of 1.
-	Priority float32
+	Priority float32 `xml:"priority,omitempty"`
 }
 
 // Token output to formatter.
